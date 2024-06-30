@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>補習晚餐要吃什麼 (For有選擇障礙的人)</title>
+    <meta name="author" content="Tzu-Ning Chiu">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #dfd3d3;
+        }
+        
+        #container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #result {
+            margin: 20px 0;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+        }
+        #description {
+            margin: 10px 0;
+            font-size: 1em;
+            color: #666;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            background-color: #e9729a;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #d49fa4;
+        }
+        button:active{
+            background:#e2cdcd;
+        }
+        img {
+            width: 350px;
+            height: auto;
+            border-radius: 8px;
+        }
+        a {
+            display: block;
+            margin-top: 10px;
+            font-size: 1.2em;
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        a:hover {
+            color: #0056b3;
+        }
+        .food-category {
+            margin: 10px;
+        }
+        footer{
+            color:rgb(196, 196, 196);
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1 style="color:rgb(175, 103, 103);">晚餐吃什麼</h1>
+        <div class="food-category">
+            <label for="foodType">選擇類型:</label>
+            <select id="foodType">
+                <option value="all">都可以</option>
+                <option value="日式">日式</option>
+                <option value="韓式">韓式</option>
+                <option value="台式">台式</option>
+                <option value="歐美">歐美</option>
+            </select>
+        </div>
+        <div id="result">你是否在猶豫補習前的晚餐要吃什麼嗎？<br/>這裡集結了補習班附近的平價美食，<br/>可幫助有選擇困難的你做出決定！</div>
+        <div id="description" style="display: none;"></div>
+        <img id="lunchImage" src="" alt="" style="display: none;">
+        <a id="storeLink" href="" target="_blank" style="display: none;">前往店家</a>
+        <br/><button onclick="drawLunch()">GoGo</button>
+        <br/><br/><br/>
+        <footer>
+            <p style="font-size: small;">copyright 2024 | <i>ninging1117@gmail.com</i></p>
+            
+        </footer>
+    </div>
+
+    <script>
+        const lunchOptions = [
+            { name: '吉野家', type: '日式', img: 'https://lh3.ggpht.com/p/AF1QipMKfkfwD6H2gjZNS2-cGRrZzKnKedP2T1ySx3Hs=s512', url: 'https://www.google.com/maps/place/%E5%90%89%E9%87%8E%E5%AE%B6+%E9%A4%A8%E5%89%8D%E5%BA%97/@25.0415855,121.5111186,16.25z/data=!3m1!5s0x3442a9733932fe4b:0xcfdcad5f39399130!4m10!1m2!2m1!1z5ZCJ6YeO5a62!3m6!1s0x3442a9733914c34d:0x6b51dc6c527c32b3!8m2!3d25.0448301!4d121.5151514!15sCgnlkInph47lrrYiA4gBAVoLIgnlkInph47lrraSARliZWVmX3JpY2VfYm93bF9yZXN0YXVyYW504AEA!16s%2Fg%2F11_q31_72?entry=ttu', description: '離補習班有點遠，但便宜且座位多' },
+            { name: '丸龜烏龍麵', type: '日式', img: 'https://lh3.googleusercontent.com/p/AF1QipNeANZv0LZTlep_D15flADBgFFY-cNxvrERVGUt=s680-w680-h510', url: 'https://www.google.com/maps/place/%E4%B8%B8%E4%BA%80%E8%A3%BD%E9%BA%B5+%E6%96%B0%E5%85%89%E4%B8%89%E8%B6%8A%E5%8F%B0%E5%8C%97%E7%AB%99%E5%89%8D%E5%BA%97+%E7%83%8F%E9%BE%8D%E9%BA%B5%E9%A4%90%E5%BB%B3/@25.0450596,121.5138266,18z/data=!4m10!1m2!2m1!1z5Li46b6c54OP6b6N6bq1!3m6!1s0x3442a972de7cbcfd:0xb5c745da894b3827!8m2!3d25.0459441!4d121.5153112!15sCg_kuLjpvpzng4_pvo3purUiA4gBAVoVIhPkuLgg6b6cIOeDjyDpvo0g6bq1kgEQdWRvbl9ub29kbGVfc2hvcOABAA!16s%2Fg%2F11c6z2m3zq?entry=ttu', description: '非常便宜又好吃，超推薦' },
+            { name: 'SUKIYA牛丼', type: '日式', img: 'https://chictirpstorageprod.blob.core.windows.net/poi/e7ccfe1b-9535-4509-a8f1-ddbefec723b6.jpg', url: 'https://www.google.com/maps/place/%E3%81%99%E3%81%8D%E5%AE%B6%E5%8F%B0%E5%8C%97%E7%AB%99%E5%89%8D/@25.0450547,121.5138266,18z/data=!3m1!5s0x3442a9731a34d621:0xd0215cb408fe642f!4m10!1m2!2m1!1zU1VLSVlB54mb5Li8!3m6!1s0x3442a9731a74afbf:0xca5db4dbdb9fa84f!8m2!3d25.0450547!4d121.5160153!15sCgxTVUtJWUHniZvkuLwiA4gBAVoQIg5zdWtpeWEg54mbIOS4vJIBGWJlZWZfcmljZV9ib3dsX3Jlc3RhdXJhbnTgAQA!16s%2Fg%2F11bw4bcqcq?entry=ttu', description: '便宜但味道普通' },
+            { name: '十三川拉麵、牛丼', type: '日式', img: 'https://2.bp.blogspot.com/-d8IP7nBx1QI/V8-WDoLbUSI/AAAAAAAADy4/b144eqRTRz4JK6CTF84Vrz6utTRj8EchwCPcB/s1600/DSC_7011-14.jpg', url: 'https://www.google.com/maps/place/%E5%8D%81%E4%B8%89%E5%B7%9D%E6%97%A5%E6%9C%AC%E6%8B%89%E9%BA%B5%E5%AE%9A%E9%A3%9F+%E5%85%AC%E5%9C%92%E5%BA%97/@25.0452867,121.5157661,18z/data=!3m1!5s0x3442a973aa8e3e31:0x98daefd2fe22615!4m14!1m7!3m6!1s0x3442a973aa5a674d:0x665d2a34f95af1cc!2z5Y2B5LiJ5bed5pel5pys5ouJ6bq15a6a6aOfIOWFrOWckuW6lw!8m2!3d25.0452843!4d121.5170536!16s%2Fg%2F11b7q9jl0f!3m5!1s0x3442a973aa5a674d:0x665d2a34f95af1cc!8m2!3d25.0452843!4d121.5170536!16s%2Fg%2F11b7q9jl0f?entry=ttu', description: '很好吃且環境舒適，價位中等，超推薦' },
+            { name: '花月嵐拉麵', type: '日式', img: 'https://img.travel98.com/xxl/P_128787_bc1c0a49eef8f36b2254a2daf48088b8_o.jpg', url: 'https://www.google.com/maps/place/%E3%82%89%E3%81%82%E3%82%81%E3%82%93%E8%8A%B1%E6%9C%88%E5%B5%90+%E5%8F%B0%E5%8C%97%E5%87%B1%E6%92%92%E5%BA%97/@25.0458785,121.515113,18z/data=!4m10!1m2!2m1!1z6Iqx5pyI5bWQ5ouJ6bq1!3m6!1s0x3442a972faf45165:0x5eaecb2146e7a213!8m2!3d25.0460643!4d121.5164947!15sCg_oirHmnIjltZDmi4npurUiA4gBAVoUIhLoirEg5pyIIOW1kCDmi4npurWSARByYW1lbl9yZXN0YXVyYW504AEA!16s%2Fg%2F11f6mf071v?entry=ttu', description: '小貴，但200元以內可以解決，份量偏大' },
+            { name: '吉豚屋豬排飯', type: '日式', img: 'https://static.popdaily.com.tw/u/202201/f9ff2bf0-725e-41f4-b2dc-64bf29495b22.jpeg', url: 'https://www.google.com/maps/place/%E5%90%89%E8%B1%9A%E5%B1%8B+%E5%92%8C%E5%84%84%E5%8C%97%E8%BB%8A%E5%BA%97/@25.0459681,121.5160642,19z/data=!4m10!1m2!2m1!1z5ZCJ6LGa5bGL6LGs5o6S6aOv!3m6!1s0x3442a972f8192c7b:0x6aa49793568c90cf!8m2!3d25.0459993!4d121.5170414!15sChLlkInosZrlsYvosazmjpLpo68iA4gBAVoYIhblkIkg6LGaIOWxiyDosazmjpIg6aOvkgETdG9ua2F0c3VfcmVzdGF1cmFudOABAA!16s%2Fg%2F11b8y9cbm1?entry=ttu', description: '小貴，但200元以內可以解決且很好吃' },
+            { name: '艾隆義大利麵', type: '歐美', img: 'https://anita.tw/wp-content/uploads/2024/03/%E8%89%BE%E9%9A%86%E7%BE%A9%E5%BC%8F%E9%BA%B5%E9%A3%9F%E9%A4%A8%E5%8C%97%E8%BB%8A%E5%BA%9719.jpg', url: 'https://www.google.com/maps/place/%E8%89%BE%E9%9A%86%E7%BE%A9%E5%BC%8F%E9%BA%B5%E9%A3%9F%E9%A4%A8(%E5%8C%97%E8%BB%8A%E5%BA%97)/@25.0453171,121.5137354,17.29z/data=!4m10!1m2!2m1!1z6Im-6ZqG576p5aSn5Yip6bq1!3m6!1s0x3442a9d01c9e454f:0xbb6f172861cc6c0d!8m2!3d25.0454631!4d121.5164095!15sChLoib7pmobnvqnlpKfliKnpurUiA4gBAVoXIhXoib4g6ZqG576pIOWkp-WIqSDpurWSAQpwYXN0YV9zaG9w4AEA!16s%2Fg%2F11h4fj30b0?entry=ttu', description: '離補習班超近，很好吃且環境舒適，價位中等' },
+            { name: '阿仁福州包', type: '台式', img: 'https://lh3.googleusercontent.com/p/AF1QipPD9ejodnrDIP_KqdTUXo7joZNGQVhYu_hGTKVC=s680-w680-h510', url: 'https://www.google.com/maps/place/%E9%98%BF%E4%BB%81%E7%A6%8F%E5%B7%9E%E5%8C%85/@25.0453259,121.5152665,18z/data=!4m7!3m6!1s0x3442a96d5a673aa9:0xb3a9e800b5bf6002!4b1!8m2!3d25.0453242!4d121.5161769!16s%2Fg%2F1tk20mld?entry=ttu', description: '便宜好吃但份量少，只能外帶' },
+            { name: '鑫耀鑫雞肉飯', type: '台式', img: 'https://sylvia128.com/wp-content/uploads/xuite/20495613-1225267407_o.jpg', url: 'https://www.google.com/maps/place/%E9%91%AB%E8%80%80%E9%91%AB/@25.044977,121.5159643,18.5z/data=!4m14!1m7!3m6!1s0x3442a97304df5c07:0xfc28cb16924ef52b!2z6ZGr6ICA6ZGr!8m2!3d25.0450758!4d121.516625!16s%2Fg%2F11c2l20krn!3m5!1s0x3442a97304df5c07:0xfc28cb16924ef52b!8m2!3d25.0450758!4d121.516625!16s%2Fg%2F11c2l20krn?entry=ttu', description: '便宜好吃但離補習班有點遠' },
+            { name: '老蔡水煎包', type: '台式', img: 'https://lh3.googleusercontent.com/p/AF1QipPc5iOIDIpNjXgClz2IHhHGXv8ttSPzVpbgMdQ=s680-w680-h510', url:'https://www.google.com/maps/place/%E8%80%81%E8%94%A1%E6%B0%B4%E7%85%8E%E5%8C%85+%E8%A8%B1%E6%98%8C%E5%BA%97/@25.0454899,121.513808,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a97302e67cd5:0x57d2afa870e9cf8!8m2!3d25.0454899!4d121.5163829!16s%2Fg%2F1pzrpfc2f?entry=ttu' , description: '便宜好吃但份量少，只能外帶' },
+            { name: '飯糰霸', type: '台式', img: 'https://weieat.tw/wp-content/uploads/2023/11/IMG_2938-1.jpg', url: 'https://www.google.com/maps/place/%E9%A3%AF%E7%B3%B0%E9%9C%B8/@25.0454365,121.5149855,17z/data=!4m14!1m7!3m6!1s0x3442a973077d37dd:0x5973c4a798ef4dbf!2z6aOv57Ow6Zy4!8m2!3d25.0454325!4d121.5170891!16s%2Fg%2F1tcv8lc4!3m5!1s0x3442a973077d37dd:0x5973c4a798ef4dbf!8m2!3d25.0454325!4d121.5170891!16s%2Fg%2F1tcv8lc4?entry=ttu', description: '便宜好吃，但是需要排隊' },
+            { name: '大狗麵線', type: '台式', img: 'https://lh3.ggpht.com/p/AF1QipMRR-RtnezkTUXuEJ0X4usg2WK168SARfY3rlSY=s512', url: 'https://www.google.com/maps/place/%E5%A4%A7%E7%8B%97%E9%BA%B5%E7%B7%9A%EF%BC%88%E5%8D%97%E9%99%BD%E5%BA%97%EF%BC%89/@25.0453036,121.5154261,17.29z/data=!4m10!1m2!2m1!1z5aSn54uX6bq157ea!3m6!1s0x3442a9731070b911:0x7092f385e89a2f89!8m2!3d25.044976!4d121.516174!15sCgzlpKfni5fpurXnt5paESIP5aSnIOeLlyDpurUg57eakgEKcmVzdGF1cmFudOABAA!16s%2Fg%2F11bxb94ytj?entry=ttu', description: '便宜好吃但份量少，只能外帶' },
+            { name: '麥當勞', type: '歐美', img: 'https://media-cdn.tripadvisor.com/media/photo-s/15/8d/04/b1/photo2jpg.jpg', url: 'https://www.google.com/maps/place/%E9%BA%A5%E7%95%B6%E5%8B%9E-%E5%8F%B0%E5%8C%97%E5%85%AC%E5%9C%92%E9%A4%90%E5%BB%B3/@25.0460239,121.5152061,18z/data=!3m1!5s0x3442a9730ba7e87b:0xeeb8a46486d4cc3f!4m10!1m2!2m1!1z6bql55W25Yue!3m6!1s0x3442a97370e28ef9:0xe118041671b1c0c4!8m2!3d25.0445611!4d121.5168731!15sCgnpuqXnlbbli54iA4gBAVoLIgnpuqXnlbbli56SARRmYXN0X2Zvb2RfcmVzdGF1cmFudOABAA!16s%2Fg%2F1tm27csw?entry=ttu', description: '好吃但不太健康' },
+            { name: '摩斯漢堡', type: '歐美', img: 'https://lh3.googleusercontent.com/p/AF1QipOVNIoXI2GCl9ZMPrEA3dCLqBB1p8IYknjU9VX9=s680-w680-h510', url: 'https://www.google.com/maps/place/%E6%91%A9%E6%96%AF%E6%BC%A2%E5%A0%A1+%E5%8F%B0%E5%8C%97%E7%AB%99%E5%89%8D%E5%BA%97/@25.0460142,121.5152061,18z/data=!3m1!5s0x3442a972e155937f:0x6eb18fedd67432ba!4m10!1m2!2m1!1z5pGp5pav5ryi5aChIA!3m6!1s0x3442a980b5108b03:0xe27c3b1609122f30!8m2!3d25.0456369!4d121.5159234!15sCgzmkanmlq_mvKLloKEiA4gBAVoQIg7mkakg5pavIOa8ouWgoZIBFGZhc3RfZm9vZF9yZXN0YXVyYW504AEA!16s%2Fg%2F11f659ptv2?entry=ttu', description: '便宜好吃但不健康' },
+            { name: '銅阪韓國烤肉.鍋.飯', type: '韓式', img: 'https://lh3.googleusercontent.com/p/AF1QipMHmFxhjPYuctj35JvnmSR9Z-ew3oB2nDbHzfI=s680-w680-h510', url: 'https://www.google.com/maps/place/%E9%8A%85%E9%98%AA%E9%9F%93%E5%9C%8B%E7%83%A4%E8%82%89.%E9%8D%8B.%E9%A3%AF/@25.0451686,121.5160858,19z/data=!4m15!1m8!3m7!1s0x3442a9f296b51531:0x1a17bbfc8b6b947c!2z6YqF6Ziq6Z-T5ZyL54Ok6IKJLumNiy7po68!8m2!3d25.0451686!4d121.516022!10e1!16s%2Fg%2F11sx0f1ml2!3m5!1s0x3442a9f296b51531:0x1a17bbfc8b6b947c!8m2!3d25.0451686!4d121.516022!16s%2Fg%2F11sx0f1ml2?entry=ttu', description: '小貴，但200元以內可以解決' },
+            { name: '精食巧海苔飯捲', type: '韓式', img: 'https://lh3.googleusercontent.com/p/AF1QipPjFR9YG9NCp0IZSiNca4peaCPjarKpksXG3-hX=s680-w680-h510', url: 'https://www.google.com/maps/place/%E7%B2%BE%E9%A3%9F%E5%B7%A7+%E6%B5%B7%E8%8B%94%E9%A3%AF%E6%8D%B2/@25.0454593,121.5136026,17z/data=!3m1!4b1!4m6!3m5!1s0x3442a9731ceebeaf:0xc8128c28c80b4a4b!8m2!3d25.0454593!4d121.5161775!16s%2Fg%2F1tlbg87x?entry=ttu', description: '便宜好吃，分量偏少，只能外帶' }
+        ];
+
+        function drawLunch() {
+            const selectedType = document.getElementById('foodType').value;
+            let filteredOptions = lunchOptions;
+            if (selectedType !== 'all') {
+                filteredOptions = lunchOptions.filter(option => option.type === selectedType);
+            }
+            
+            // 開始拉霸效果
+            document.getElementById('result').innerText = '抽籤中...';
+            const interval = setInterval(() => {
+                const randomIndex = Math.floor(Math.random() * filteredOptions.length);
+                document.getElementById('result').innerText = filteredOptions[randomIndex].name;
+            }, 100);
+
+            setTimeout(() => {
+                clearInterval(interval);
+                const randomIndex = Math.floor(Math.random() * filteredOptions.length);
+                const chosenLunch = filteredOptions[randomIndex];
+                document.getElementById('result').innerText = chosenLunch.name;
+                document.getElementById('description').innerText = chosenLunch.description;
+                document.getElementById('description').style.display = 'block';
+                const lunchImage = document.getElementById('lunchImage');
+                lunchImage.src = chosenLunch.img;
+                lunchImage.alt = chosenLunch.name;
+                lunchImage.style.display = 'block';
+                const storeLink = document.getElementById('storeLink');
+                storeLink.href = chosenLunch.url;
+                storeLink.style.display = 'block';
+                storeLink.innerText = `前往${chosenLunch.name}`;
+            }, 1000); // 拉霸效果持續3秒鐘
+        }
+    </script>
+    
+</body>
+</html>
